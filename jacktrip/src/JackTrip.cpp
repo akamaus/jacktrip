@@ -419,7 +419,7 @@ int JackTrip::serverStart(bool timeout, int udpTimeout)
   QUdpSocket UdpSockTemp;// Create socket to wait for client
 
   // Bind the socket
-  if ( !UdpSockTemp.bind(QHostAddress::Any, mReceiverBindPort,
+  if ( !UdpSockTemp.bind(QHostAddress::AnyIPv6, mReceiverBindPort,
                          QUdpSocket::DefaultForPlatform) )
   {
     std::cerr << "in JackTrip: Could not bind UDP socket. It may be already binded." << endl;
