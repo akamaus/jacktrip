@@ -160,17 +160,17 @@ void UdpDataProtocol::bindSocket(QUdpSocket& UdpSocket) throw(std::runtime_error
 #if defined ( __LINUX__ ) || (__MAC_OSX__)
   int sock_fd;
   //Set local IPv4 Address
-  struct sockaddr_in local_addr;
+  struct sockaddr_in6 local_addr;
 #endif
 
   // Creat socket descriptor
-  sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
+  sock_fd = socket(AF_INET6, SOCK_DGRAM, 0);
 
   //::bzero(&local_addr, sizeof(local_addr));
   std::memset(&local_addr, 0, sizeof(local_addr)); // set buffer to 0
-  local_addr.sin_family = AF_INET; //AF_INET: IPv4 Protocol
-  local_addr.sin_addr.s_addr = htonl(INADDR_ANY); //INADDR_ANY: let the kernel decide the active address
-  local_addr.sin_port = htons(mBindPort); //set local port
+  local_addr.sin6_family = AF_INET6; //AF_INET: IPv4 Protocol
+  local_addr.sin6_addr = in6addr_any; //INADDR_ANY: let the kernel decide the active address
+  local_addr.sin6_port = htons(mBindPort); //set local port
 
   // Set socket to be reusable, this is platform dependent
   int one = 1;
@@ -209,15 +209,15 @@ void UdpDataProtocol::bindSocket(QUdpSocket& UdpSocket) throw(std::runtime_error
   else if (mRunMode == RECEIVER) {
 #if defined (__LINUX__) || (__MAC_OSX__)
     // Set peer IPv4 Address
-    struct sockaddr_in peer_addr;
+    struct sockaddr_in6 peer_addr;
     bzero(&peer_addr, sizeof(peer_addr));
-    peer_addr.sin_family = AF_INET; //AF_INET: IPv4 Protocol
-    peer_addr.sin_addr.s_addr = htonl(INADDR_ANY); //INADDR_ANY: let the kernel decide the active address
-    peer_addr.sin_port = htons(mPeerPort); //set local port
+    peer_addr.sin6_family = AF_INET6; //AF_INET: IPv4 Protocol
+    peer_addr.sin6_addr = in6addr_any; //INADDR_ANY: let the kernel decide the active address
+    peer_addr.sin6_port = htons(mPeerPort); //set local port
     // Connect the socket and issue a Write shutdown (to make it a
     // reader socket only)
-    if ( (::inet_pton(AF_INET, mPeerAddress.toString().toLatin1().constData(),
-                      &peer_addr.sin_addr)) < 1 )
+    if ( (::inet_pton(AF_INET6, mPeerAddress.toString().toLatin1().constData(),
+                      &peer_addr.sin6_addr)) < 1 )
     { throw std::runtime_error("ERROR: Invalid address presentation format"); }
     if ( (::connect(sock_fd, (struct sockaddr *) &peer_addr, sizeof(peer_addr))) < 0)
     { throw std::runtime_error("ERROR: Could not connect UDP socket"); }
